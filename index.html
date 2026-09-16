@@ -721,16 +721,16 @@
     function openJoinModal() {
         const code = document.getElementById('join-code-input').value.trim().toUpperCase();
         if (code.length < 4) {
-            alert("Wpisz kod pokoju!");
+            alert("Wpisz prawidłowy 4-cyfrowy kod pokoju!");
             return;
         }
         const room = getRoomData(code);
         if (!room) {
-            alert("Nie znaleziono takiego pokoju!");
+            alert("Nie znaleziono pokoju o takim kodzie!");
             return;
         }
         if (room.players.length >= room.maxPlayers) {
-            alert("Pokój jest pełny!");
+            alert("Ten pokój jest już pełny!");
             return;
         }
         document.getElementById('nickname-modal').style.display = 'flex';
