@@ -165,6 +165,7 @@
             margin: 8px 0;
             cursor: pointer;
             text-align: left;
+            transition: all 0.2s;
         }
 
         .quiz-option:hover { border-color: #818cf8; background: #312e81; }
@@ -275,8 +276,8 @@
     <div id="screen-flashcards" class="screen">
         <h1 id="fc-category">Słówka</h1>
         <div class="card" id="flashcard" onclick="flipCard()">
-            <div class="word" id="fc-word">Apple</div>
-            <div class="translation" id="fc-translation">Jabłko</div>
+            <div class="word" id="fc-word">---</div>
+            <div class="translation" id="fc-translation">---</div>
             <div class="hint">Kliknij, aby zobaczyć tłumaczenie</div>
         </div>
         <div>
@@ -352,7 +353,7 @@
             <div id="arena-live-scores" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 8px; margin-top: 5px;"></div>
         </div>
 
-        <p id="arena-progress" style="color: #38bdf8; font-weight: bold;">Pytanie 1 z 25</p>
+        <p id="arena-progress" style="color: #38bdf8; font-weight: bold;">Pytanie 1 z 10</p>
         <p id="arena-question" style="font-size: 1.3rem; color: #fff; margin: 15px 0;"></p>
         <div id="arena-options"></div>
 
@@ -384,68 +385,84 @@
     const data = {
         easy: {
             "To Be (am/is/are)": {
-                words: [{ en: "I am", pl: "Ja jestem" }, { en: "You are", pl: "Ty jesteś" }],
-                riddles: [{ q: "I ___ a student.", options: ["am", "is", "are"], correct: 0 }, { q: "She ___ happy.", options: ["is", "am", "are"], correct: 0 }]
+                words: [
+                    { en: "I am", pl: "Ja jestem" },
+                    { en: "You are", pl: "Ty jesteś" },
+                    { en: "He is", pl: "On jest" },
+                    { en: "She is", pl: "Ona jest" }
+                ],
+                riddles: [
+                    { q: "I ___ a student.", options: ["am", "is", "are"], correct: 0 },
+                    { q: "She ___ happy.", options: ["is", "am", "are"], correct: 0 },
+                    { q: "They ___ my friends.", options: ["are", "is", "am"], correct: 0 }
+                ]
             },
             "Zwierzęta": {
-                words: [{ en: "Dog", pl: "Pies" }, { en: "Cat", pl: "Kot" }],
-                riddles: [{ q: "It barks and wags its tail.", options: ["Dog", "Cat", "Cow"], correct: 0 }]
+                words: [
+                    { en: "Dog", pl: "Pies" },
+                    { en: "Cat", pl: "Kot" },
+                    { en: "Bird", pl: "Ptak" }
+                ],
+                riddles: [
+                    { q: "It barks and wags its tail.", options: ["Dog", "Cat", "Cow"], correct: 0 },
+                    { q: "It says 'meow'.", options: ["Dog", "Cat", "Bird"], correct: 1 }
+                ]
             },
             "Kolory i Liczby": {
-                words: [{ en: "Red", pl: "Czerwony" }, { en: "One", pl: "Jeden" }],
-                riddles: [{ q: "What color is a strawberry?", options: ["Red", "Green", "Blue"], correct: 0 }]
-            },
-            "Owoce i Warzywa": {
-                words: [{ en: "Apple", pl: "Jabłko" }, { en: "Carrot", pl: "Marchewka" }],
-                riddles: [{ q: "Rabbits love to eat this orange vegetable.", options: ["Carrot", "Apple", "Banana"], correct: 0 }]
-            },
-            "Części Ciała": {
-                words: [{ en: "Head", pl: "Głowa" }, { en: "Hand", pl: "Ręka" }],
-                riddles: [{ q: "You use them to see things.", options: ["Eyes", "Ears", "Nose"], correct: 0 }]
+                words: [
+                    { en: "Red", pl: "Czerwony" },
+                    { en: "Blue", pl: "Niebieski" },
+                    { en: "One", pl: "Jeden" }
+                ],
+                riddles: [
+                    { q: "What color is a strawberry?", options: ["Red", "Green", "Blue"], correct: 0 },
+                    { q: "What color is the sky on a sunny day?", options: ["Red", "Blue", "Black"], correct: 1 }
+                ]
             }
         },
         medium: {
             "To Be (Was/Were)": {
-                words: [{ en: "I was", pl: "Byłem" }, { en: "They were", pl: "Byli" }],
-                riddles: [{ q: "Yesterday I ___ at school.", options: ["was", "were", "am"], correct: 0 }]
+                words: [
+                    { en: "I was", pl: "Byłem/Byłam" },
+                    { en: "They were", pl: "Byli/Były" }
+                ],
+                riddles: [
+                    { q: "Yesterday I ___ at school.", options: ["was", "were", "am"], correct: 0 },
+                    { q: "We ___ at home last night.", options: ["were", "was", "are"], correct: 0 }
+                ]
             },
             "Szkoła i Przybory": {
-                words: [{ en: "Pencil", pl: "Ołówek" }, { en: "Desk", pl: "Biurko" }],
-                riddles: [{ q: "You write with this in your notebook.", options: ["Pen", "Ruler", "Eraser"], correct: 0 }]
-            },
-            "Dom i Meble": {
-                words: [{ en: "Kitchen", pl: "Kuchnia" }, { en: "Bed", pl: "Łóżko" }],
-                riddles: [{ q: "You sleep on this at night.", options: ["Bed", "Table", "Chair"], correct: 0 }]
-            },
-            "Jedzenie i Napoje": {
-                words: [{ en: "Water", pl: "Woda" }, { en: "Bread", pl: "Chleb" }],
-                riddles: [{ q: "A clear liquid you drink when thirsty.", options: ["Water", "Milk", "Juice"], correct: 0 }]
-            },
-            "Pogoda i Pory Roku": {
-                words: [{ en: "Summer", pl: "Lato" }, { en: "Rain", pl: "Deszcz" }],
-                riddles: [{ q: "Hot season with summer holidays.", options: ["Summer", "Winter", "Autumn"], correct: 0 }]
+                words: [
+                    { en: "Pencil", pl: "Ołówek" },
+                    { en: "Desk", pl: "Biurko" },
+                    { en: "Ruler", pl: "Linijka" }
+                ],
+                riddles: [
+                    { q: "You write with this in your notebook.", options: ["Pen", "Ruler", "Eraser"], correct: 0 },
+                    { q: "You use it to measure lines.", options: ["Ruler", "Pencil", "Book"], correct: 0 }
+                ]
             }
         },
         hard: {
-            "To Be & Past Tenses": {
-                words: [{ en: "Been", pl: "Był (Present Perfect)" }],
-                riddles: [{ q: "She has ___ to Paris twice.", options: ["been", "was", "were"], correct: 0 }]
+            "Past Tenses & Perfect": {
+                words: [
+                    { en: "Been", pl: "Był (Present Perfect)" },
+                    { en: "Gone", pl: "Poszedł" }
+                ],
+                riddles: [
+                    { q: "She has ___ to Paris twice.", options: ["been", "was", "were"], correct: 0 },
+                    { q: "They have already ___ their homework.", options: ["done", "did", "do"], correct: 0 }
+                ]
             },
             "Środowisko i Ekologia": {
-                words: [{ en: "Environment", pl: "Środowisko" }],
-                riddles: [{ q: "Making nature dirty is called...", options: ["Pollution", "Recycling", "Protection"], correct: 0 }]
-            },
-            "Człowiek i Emocje": {
-                words: [{ en: "Anxious", pl: "Zaniepokojony" }],
-                riddles: [{ q: "When you share things with others you are...", options: ["Generous", "Selfish", "Shy"], correct: 0 }]
-            },
-            "Podróże i Transport": {
-                words: [{ en: "Airport", pl: "Lotnisko" }],
-                riddles: [{ q: "Planes take off from here.", options: ["Airport", "Station", "Harbor"], correct: 0 }]
-            },
-            "Nauka i Technologia": {
-                words: [{ en: "Computer", pl: "Komputer" }],
-                riddles: [{ q: "A device used to surf the internet.", options: ["Computer", "Fridge", "Oven"], correct: 0 }]
+                words: [
+                    { en: "Environment", pl: "Środowisko" },
+                    { en: "Pollution", pl: "Zanieczyszczenie" }
+                ],
+                riddles: [
+                    { q: "Making nature dirty is called...", options: ["Pollution", "Recycling", "Protection"], correct: 0 },
+                    { q: "Reusing materials is known as...", options: ["Recycling", "Pollution", "Wasting"], correct: 0 }
+                ]
             }
         }
     };
@@ -517,12 +534,16 @@
         document.getElementById('fc-translation').innerText = words[currentCardIndex].pl;
     }
 
-    function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+    function flipCard() { 
+        document.getElementById('flashcard').classList.toggle('flipped'); 
+    }
+
     function nextCard() {
         const words = data[currentDifficulty][currentTopic].words;
         currentCardIndex = (currentCardIndex + 1) % words.length;
         showCard();
     }
+
     function prevCard() {
         const words = data[currentDifficulty][currentTopic].words;
         currentCardIndex = (currentCardIndex - 1 + words.length) % words.length;
@@ -556,7 +577,7 @@
                 const riddles = data[currentDifficulty][currentTopic].riddles;
                 currentRiddleIndex = (currentRiddleIndex + 1) % riddles.length;
                 showRiddle();
-            }, 1200);
+            }, 1000);
         } else {
             result.innerText = "Spróbuj ponownie!";
             result.style.color = "#f87171";
@@ -581,7 +602,6 @@
     }
     updateCreateTopics();
 
-    // SINK / LOCAL STORAGE MANAGEMENT
     function getRoomData(code) {
         const raw = localStorage.getItem('arena_room_' + code);
         return raw ? JSON.parse(raw) : null;
@@ -621,7 +641,7 @@
     }
 
     function openJoinModal() {
-        const code = document.getElementById('join-code-input').value.trim();
+        const code = document.getElementById('join-code-input').value.trim().toUpperCase();
         if (code.length < 4) {
             alert("Wpisz kod pokoju!");
             return;
@@ -632,7 +652,7 @@
             return;
         }
         if (room.players.length >= room.maxPlayers) {
-            alert("Pokój jest pełny! Max 24 osoby.");
+            alert("Pokój jest pełny!");
             return;
         }
         document.getElementById('nickname-modal').style.display = 'flex';
@@ -684,16 +704,13 @@
         const room = getRoomData(currentRoomCode);
         if (!room) return;
 
-        // Aktualizacja widoku lobby
         renderLobbyPlayers(room.players);
 
-        // Wykrycie startu gry przez gracza
         if (!isHost && room.status === 'in_game' && document.getElementById('screen-room-lobby').classList.contains('active')) {
             initGameQuestions(room);
             goToScreen('screen-arena');
         }
 
-        // Synchronizacja wyników w trakcie gry
         if (document.getElementById('screen-arena').classList.contains('active')) {
             updateLiveLeaderboard(room.players);
         }
@@ -739,7 +756,7 @@
         const topicRiddles = data[diff][room.topic].riddles;
 
         arenaQuestionsList = [];
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 10; i++) {
             arenaQuestionsList.push(topicRiddles[i % topicRiddles.length]);
         }
 
@@ -761,12 +778,12 @@
     }
 
     function showArenaQuestion() {
-        if (arenaQuestionIndex >= 25) {
+        if (arenaQuestionIndex >= arenaQuestionsList.length) {
             finishArena();
             return;
         }
 
-        document.getElementById('arena-progress').innerText = `Pytanie ${arenaQuestionIndex + 1} z 25`;
+        document.getElementById('arena-progress').innerText = `Pytanie ${arenaQuestionIndex + 1} z ${arenaQuestionsList.length}`;
         const q = arenaQuestionsList[arenaQuestionIndex];
         document.getElementById('arena-question').innerText = q.q;
 
