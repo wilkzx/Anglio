@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angielski dla Klas 1-8 - Arena</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            margin: 8px 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            box-shadow: none;
+            font-size: 0.95rem;
+            padding: 10px 18px;
+            width: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .grid-button {
+            background: #1e293b;
+            border: 2px solid #334155;
+            color: #f8fafc;
+            padding: 15px 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .grid-button:hover {
+            border-color: #38bdf8;
+            background: #0284c7;
+            transform: scale(1.03);
+        }
+
+        input, select {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .card {
+            background: #0f172a;
+            border: 2px solid #38bdf8;
+            border-radius: 20px;
+            padding: 40px 20px;
+            margin: 20px 0;
+            cursor: pointer;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card .word { font-size: 2rem; font-weight: bold; color: #38bdf8; }
+        .card .translation { font-size: 1.5rem; color: #4ade80; margin-top: 10px; display: none; }
+        .card.flipped .translation { display: block; }
+        .card .hint { font-size: 0.8rem; color: #64748b; margin-top: 15px; }
+
+        .quiz-option {
+            background: #1e293b;
+            border: 2px solid #334155;
+            padding: 14px;
+            border-radius: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .quiz-option:hover { border-color: #818cf8; background: #312e81; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #38bdf8;
+            text-align: center;
+        }
+
+        .players-list {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #1e293b;
+            margin-bottom: 6px;
+            border-radius: 8px;
+        }
+
+        .live-leaderboard {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #38bdf8;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- MENU GŁÓWNE -->
+    <div id="screen-home" class="screen active">
+        <h1>Angielski dla Klas 1-8</h1>
+        <p>Aplikacja do nauki i rywalizacji</p>
+        
+        <button class="btn" onclick="goToScreen('screen-class')">ZACZNIJ</button>
+        <br>
+        <button class="btn btn-green" onclick="goToScreen('screen-create-room')">STWÓRZ ARENĘ</button>
+        
+        <div style="margin-top: 25px; border-top: 1px solid #334155; padding-top: 15px;">
+            <p style="margin-bottom: 8px; font-weight: bold;">Masz kod pokoju?</p>
+            <input type="text" id="join-code-input" placeholder="Wpisz kod pokoju" style="max-width: 200px; text-transform: uppercase;">
+            <br>
+            <button class="btn btn-secondary" onclick="openJoinModal()">Dołącz</button>
+        </div>
+    </div>
+
+    <!-- WYBÓR KLASY -->
+    <div id="screen-class" class="screen">
+        <h1>Wybierz Klasę</h1>
+        <p>Wybierz poziom nauki:</p>
+        <div class="grid">
+            <button class="grid-button" onclick="selectClass(1)">Klasa 1</button>
+            <button class="grid-button" onclick="selectClass(2)">Klasa 2</button>
+            <button class="grid-button" onclick="selectClass(3)">Klasa 3</button>
+            <button class="grid-button" onclick="selectClass(4)">Klasa 4</button>
+            <button class="grid-button" onclick="selectClass(5)">Klasa 5</button>
+            <button class="grid-button" onclick="selectClass(6)">Klasa 6</button>
+            <button class="grid-button" onclick="selectClass(7)">Klasa 7</button>
+            <button class="grid-button" onclick="selectClass(8)">Klasa 8</button>
+        </div>
+        <button class="btn btn-secondary" onclick="goToScreen('screen-home')">Cofnij</button>
+    </div>
+
+    <!-- WYBÓR TEMATU -->
+    <div id="screen-topic" class="screen">
+        <h1>Wybierz Temat</h1>
+        <div id="topics-list" class="grid"></div>
+        <button class="btn btn-secondary" onclick="goToScreen('screen-class')">Cofnij</button>
+    </div>
+
+    <!-- WYBÓR TRYBU -->
+    <div id="screen-mode" class="screen">
+        <h1>Wybierz Tryb</h1>
+        <button class="btn" onclick="startLearning('flashcards')">Słówka (Fiszki)</button>
+        <br>
+        <button class="btn" onclick="startLearning('riddles')">Zagadki / Quiz</button>
+        <br><br>
+        <button class="btn btn-secondary" onclick="goToScreen('screen-topic')">Cofnij</button>
+    </div>
+
+    <!-- FISZKI -->
+    <div id="screen-flashcards" class="screen">
+        <h1 id="fc-category">Słówka</h1>
+        <div class="card" id="flashcard" onclick="flipCard()">
+            <div class="word" id="fc-word">Apple</div>
+            <div class="translation" id="fc-translation">Jabłko</div>
+            <div class="hint">Kliknij, aby zobaczyć tłumaczenie</div>
+        </div>
+        <div>
+            <button class="btn btn-secondary" onclick="prevCard()">← Poprzednie</button>
+            <button class="btn btn-secondary" onclick="nextCard()">Następne →</button>
+        </div>
+        <br>
+        <button class="btn btn-secondary" onclick="goToScreen('screen-mode')">Cofnij</button>
+    </div>
+
+    <!-- ZAGADKI SOLO -->
+    <div id="screen-riddles" class="screen">
+        <h1>Quiz</h1>
+        <p id="riddle-question" style="font-size: 1.2rem; color: #fff; margin: 20px 0;"></p>
+        <div id="riddle-options"></div>
+        <p id="riddle-result" style="font-weight: bold; margin-top: 15px;"></p>
+        <br>
+        <button class="btn btn-secondary" onclick="goToScreen('screen-mode')">Cofnij</button>
+    </div>
+
+    <!-- STWÓRZ ARENĘ -->
+    <div id="screen-create-room" class="screen">
+        <h1>Stwórz Arenę</h1>
+        
+        <label>Wybierz Klasę:</label><br>
+        <select id="create-class" onchange="updateCreateTopics()">
+            <option value="1">Klasy 1-3</option>
+            <option value="4">Klasy 4-6</option>
+            <option value="7">Klasy 7-8</option>
+        </select>
+        <br>
+
+        <label>Wybierz Temat:</label><br>
+        <select id="create-topic"></select>
+        <br>
+
+        <label>Maksymalna liczba osób:</label><br>
+        <select id="create-max-players">
+            <option value="2">2 Osoby</option>
+            <option value="4">4 Osoby</option>
+            <option value="8">8 Osób</option>
+            <option value="12">12 Osób</option>
+            <option value="16">16 Osób</option>
+            <option value="24" selected>24 Osoby</option>
+        </select>
+        <br><br>
+
+        <button class="btn btn-green" onclick="generateRoom()">GOTOWE (STWÓRZ)</button>
+        <br>
+        <button class="btn btn-secondary" onclick="goToScreen('screen-home')">Cofnij</button>
+    </div>
+
+    <!-- LOBBY POKOJU -->
+    <div id="screen-room-lobby" class="screen">
+        <h1>Poczekalnia Areny</h1>
+        <p>Kod Pokoju:</p>
+        <h2 id="lobby-code-display" style="font-size: 3rem; color: #38bdf8; letter-spacing: 5px; margin-bottom: 10px;">----</h2>
+        
+        <p id="lobby-info">Gracze w pokoju (<span id="player-count">0</span>/<span id="max-player-count">0</span>):</p>
+        
+        <div class="players-list" id="lobby-players-list"></div>
+
+        <button class="btn btn-green" id="btn-start-arena" onclick="startArenaGame()">ZACZNIJ GRAĆ</button>
+        <p id="non-host-msg" style="color: #cbd5e1; display: none;">Czekaj, aż założyciel (Host) rozpocznie grę...</p>
+        <br>
+        <button class="btn btn-red" onclick="leaveLobby()">Wyjdź</button>
+    </div>
+
+    <!-- ARENA MULTIPLAYER -->
+    <div id="screen-arena" class="screen">
+        <div class="live-leaderboard">
+            <strong>Tabela Wyników Na Żywo:</strong>
+            <div id="arena-live-scores" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 8px; margin-top: 5px;"></div>
+        </div>
+
+        <p id="arena-progress" style="color: #38bdf8; font-weight: bold;">Pytanie 1 z 25</p>
+        <p id="arena-question" style="font-size: 1.3rem; color: #fff; margin: 15px 0;"></p>
+        <div id="arena-options"></div>
+
+        <br>
+        <button class="btn btn-secondary" onclick="leaveLobby()">Wyjdź z Areny</button>
+    </div>
+
+    <!-- PODSUMOWANIE ARENY -->
+    <div id="screen-arena-results" class="screen">
+        <h1>Koniec Gry!</h1>
+        <div class="players-list" id="final-leaderboard"></div>
+        <button class="btn btn-green" onclick="goToScreen('screen-home')">Menu Główny</button>
+    </div>
+
+</div>
+
+<!-- MODAL NA NICK -->
+<div class="modal" id="nickname-modal">
+    <div class="modal-content">
+        <h2>Podaj swój Nick</h2>
+        <input type="text" id="player-nickname" placeholder="Twoja nazwa" maxlength="12">
+        <br><br>
+        <button class="btn btn-green" onclick="confirmJoinRoom()">Dołącz</button>
+        <button class="btn btn-secondary" onclick="closeJoinModal()">Anuluj</button>
+    </div>
+</div>
+
+<script>
+    const data = {
+        easy: {
+            "To Be (am/is/are)": {
+                words: [{ en: "I am", pl: "Ja jestem" }, { en: "You are", pl: "Ty jesteś" }],
+                riddles: [{ q: "I ___ a student.", options: ["am", "is", "are"], correct: 0 }, { q: "She ___ happy.", options: ["is", "am", "are"], correct: 0 }]
+            },
+            "Zwierzęta": {
+                words: [{ en: "Dog", pl: "Pies" }, { en: "Cat", pl: "Kot" }],
+                riddles: [{ q: "It barks and wags its tail.", options: ["Dog", "Cat", "Cow"], correct: 0 }]
+            },
+            "Kolory i Liczby": {
+                words: [{ en: "Red", pl: "Czerwony" }, { en: "One", pl: "Jeden" }],
+                riddles: [{ q: "What color is a strawberry?", options: ["Red", "Green", "Blue"], correct: 0 }]
+            },
+            "Owoce i Warzywa": {
+                words: [{ en: "Apple", pl: "Jabłko" }, { en: "Carrot", pl: "Marchewka" }],
+                riddles: [{ q: "Rabbits love to eat this orange vegetable.", options: ["Carrot", "Apple", "Banana"], correct: 0 }]
+            },
+            "Części Ciała": {
+                words: [{ en: "Head", pl: "Głowa" }, { en: "Hand", pl: "Ręka" }],
+                riddles: [{ q: "You use them to see things.", options: ["Eyes", "Ears", "Nose"], correct: 0 }]
+            }
+        },
+        medium: {
+            "To Be (Was/Were)": {
+                words: [{ en: "I was", pl: "Byłem" }, { en: "They were", pl: "Byli" }],
+                riddles: [{ q: "Yesterday I ___ at school.", options: ["was", "were", "am"], correct: 0 }]
+            },
+            "Szkoła i Przybory": {
+                words: [{ en: "Pencil", pl: "Ołówek" }, { en: "Desk", pl: "Biurko" }],
+                riddles: [{ q: "You write with this in your notebook.", options: ["Pen", "Ruler", "Eraser"], correct: 0 }]
+            },
+            "Dom i Meble": {
+                words: [{ en: "Kitchen", pl: "Kuchnia" }, { en: "Bed", pl: "Łóżko" }],
+                riddles: [{ q: "You sleep on this at night.", options: ["Bed", "Table", "Chair"], correct: 0 }]
+            },
+            "Jedzenie i Napoje": {
+                words: [{ en: "Water", pl: "Woda" }, { en: "Bread", pl: "Chleb" }],
+                riddles: [{ q: "A clear liquid you drink when thirsty.", options: ["Water", "Milk", "Juice"], correct: 0 }]
+            },
+            "Pogoda i Pory Roku": {
+                words: [{ en: "Summer", pl: "Lato" }, { en: "Rain", pl: "Deszcz" }],
+                riddles: [{ q: "Hot season with summer holidays.", options: ["Summer", "Winter", "Autumn"], correct: 0 }]
+            }
+        },
+        hard: {
+            "To Be & Past Tenses": {
+                words: [{ en: "Been", pl: "Był (Present Perfect)" }],
+                riddles: [{ q: "She has ___ to Paris twice.", options: ["been", "was", "were"], correct: 0 }]
+            },
+            "Środowisko i Ekologia": {
+                words: [{ en: "Environment", pl: "Środowisko" }],
+                riddles: [{ q: "Making nature dirty is called...", options: ["Pollution", "Recycling", "Protection"], correct: 0 }]
+            },
+            "Człowiek i Emocje": {
+                words: [{ en: "Anxious", pl: "Zaniepokojony" }],
+                riddles: [{ q: "When you share things with others you are...", options: ["Generous", "Selfish", "Shy"], correct: 0 }]
+            },
+            "Podróże i Transport": {
+                words: [{ en: "Airport", pl: "Lotnisko" }],
+                riddles: [{ q: "Planes take off from here.", options: ["Airport", "Station", "Harbor"], correct: 0 }]
+            },
+            "Nauka i Technologia": {
+                words: [{ en: "Computer", pl: "Komputer" }],
+                riddles: [{ q: "A device used to surf the internet.", options: ["Computer", "Fridge", "Oven"], correct: 0 }]
+            }
+        }
+    };
+
+    let currentClass = 1;
+    let currentDifficulty = 'easy';
+    let currentTopic = '';
+    let currentCardIndex = 0;
+    let currentRiddleIndex = 0;
+
+    let isHost = false;
+    let currentRoomCode = '';
+    let myNickname = '';
+    let arenaQuestionIndex = 0;
+    let arenaQuestionsList = [];
+    let syncInterval = null;
+
+    function goToScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function selectClass(num) {
+        currentClass = num;
+        if (num <= 3) currentDifficulty = 'easy';
+        else if (num <= 6) currentDifficulty = 'medium';
+        else currentDifficulty = 'hard';
+
+        renderTopics();
+        goToScreen('screen-topic');
+    }
+
+    function renderTopics() {
+        const list = document.getElementById('topics-list');
+        list.innerHTML = '';
+        const topics = Object.keys(data[currentDifficulty]);
+
+        topics.forEach(topic => {
+            const btn = document.createElement('button');
+            btn.className = 'grid-button';
+            btn.innerText = topic;
+            btn.onclick = () => selectTopic(topic);
+            list.appendChild(btn);
+        });
+    }
+
+    function selectTopic(topic) {
+        currentTopic = topic;
+        goToScreen('screen-mode');
+    }
+
+    function startLearning(mode) {
+        if (mode === 'flashcards') {
+            currentCardIndex = 0;
+            showCard();
+            goToScreen('screen-flashcards');
+        } else {
+            currentRiddleIndex = 0;
+            showRiddle();
+            goToScreen('screen-riddles');
+        }
+    }
+
+    function showCard() {
+        const words = data[currentDifficulty][currentTopic].words;
+        document.getElementById('flashcard').classList.remove('flipped');
+        document.getElementById('fc-category').innerText = currentTopic;
+        document.getElementById('fc-word').innerText = words[currentCardIndex].en;
+        document.getElementById('fc-translation').innerText = words[currentCardIndex].pl;
+    }
+
+    function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+    function nextCard() {
+        const words = data[currentDifficulty][currentTopic].words;
+        currentCardIndex = (currentCardIndex + 1) % words.length;
+        showCard();
+    }
+    function prevCard() {
+        const words = data[currentDifficulty][currentTopic].words;
+        currentCardIndex = (currentCardIndex - 1 + words.length) % words.length;
+        showCard();
+    }
+
+    function showRiddle() {
+        const riddles = data[currentDifficulty][currentTopic].riddles;
+        const currentRiddle = riddles[currentRiddleIndex];
+        document.getElementById('riddle-question').innerText = currentRiddle.q;
+        document.getElementById('riddle-result').innerText = '';
+
+        const optionsContainer = document.getElementById('riddle-options');
+        optionsContainer.innerHTML = '';
+
+        currentRiddle.options.forEach((opt, idx) => {
+            const div = document.createElement('div');
+            div.className = 'quiz-option';
+            div.innerText = opt;
+            div.onclick = () => checkAnswer(idx, currentRiddle.correct);
+            optionsContainer.appendChild(div);
+        });
+    }
+
+    function checkAnswer(selected, correct) {
+        const result = document.getElementById('riddle-result');
+        if (selected === correct) {
+            result.innerText = "Poprawna odpowiedź!";
+            result.style.color = "#4ade80";
+            setTimeout(() => {
+                const riddles = data[currentDifficulty][currentTopic].riddles;
+                currentRiddleIndex = (currentRiddleIndex + 1) % riddles.length;
+                showRiddle();
+            }, 1200);
+        } else {
+            result.innerText = "Spróbuj ponownie!";
+            result.style.color = "#f87171";
+        }
+    }
+
+    function updateCreateTopics() {
+        const classVal = parseInt(document.getElementById('create-class').value);
+        let diff = 'easy';
+        if (classVal >= 4 && classVal <= 6) diff = 'medium';
+        if (classVal >= 7) diff = 'hard';
+
+        const select = document.getElementById('create-topic');
+        select.innerHTML = '';
+
+        Object.keys(data[diff]).forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.innerText = t;
+            select.appendChild(opt);
+        });
+    }
+    updateCreateTopics();
+
+    // SINK / LOCAL STORAGE MANAGEMENT
+    function getRoomData(code) {
+        const raw = localStorage.getItem('arena_room_' + code);
+        return raw ? JSON.parse(raw) : null;
+    }
+
+    function saveRoomData(code, roomObj) {
+        localStorage.setItem('arena_room_' + code, JSON.stringify(roomObj));
+    }
+
+    function generateRoom() {
+        isHost = true;
+        myNickname = "Host";
+        currentRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
+        
+        const maxP = parseInt(document.getElementById('create-max-players').value);
+        const classVal = parseInt(document.getElementById('create-class').value);
+        const selectedTopic = document.getElementById('create-topic').value;
+
+        const roomObj = {
+            code: currentRoomCode,
+            maxPlayers: maxP,
+            classVal: classVal,
+            topic: selectedTopic,
+            status: 'lobby',
+            players: [{ name: myNickname, score: 0, isHost: true }]
+        };
+
+        saveRoomData(currentRoomCode, roomObj);
+
+        document.getElementById('lobby-code-display').innerText = currentRoomCode;
+        document.getElementById('max-player-count').innerText = maxP;
+        document.getElementById('btn-start-arena').style.display = 'inline-block';
+        document.getElementById('non-host-msg').style.display = 'none';
+
+        startSync();
+        goToScreen('screen-room-lobby');
+    }
+
+    function openJoinModal() {
+        const code = document.getElementById('join-code-input').value.trim();
+        if (code.length < 4) {
+            alert("Wpisz kod pokoju!");
+            return;
+        }
+        const room = getRoomData(code);
+        if (!room) {
+            alert("Nie znaleziono takiego pokoju!");
+            return;
+        }
+        if (room.players.length >= room.maxPlayers) {
+            alert("Pokój jest pełny! Max 24 osoby.");
+            return;
+        }
+        document.getElementById('nickname-modal').style.display = 'flex';
+    }
+
+    function closeJoinModal() {
+        document.getElementById('nickname-modal').style.display = 'none';
+    }
+
+    function confirmJoinRoom() {
+        const nick = document.getElementById('player-nickname').value.trim();
+        if (!nick) {
+            alert("Wpisz swój nick!");
+            return;
+        }
+
+        isHost = false;
+        myNickname = nick;
+        currentRoomCode = document.getElementById('join-code-input').value.trim().toUpperCase();
+
+        const room = getRoomData(currentRoomCode);
+        if (room) {
+            const existing = room.players.find(p => p.name === myNickname);
+            if (!existing) {
+                room.players.push({ name: myNickname, score: 0, isHost: false });
+                saveRoomData(currentRoomCode, room);
+            }
+        }
+
+        closeJoinModal();
+        
+        document.getElementById('lobby-code-display').innerText = currentRoomCode;
+        document.getElementById('max-player-count').innerText = room ? room.maxPlayers : 24;
+        document.getElementById('btn-start-arena').style.display = 'none';
+        document.getElementById('non-host-msg').style.display = 'block';
+
+        startSync();
+        goToScreen('screen-room-lobby');
+    }
+
+    function startSync() {
+        if (syncInterval) clearInterval(syncInterval);
+        syncInterval = setInterval(syncLoop, 1000);
+        syncLoop();
+    }
+
+    function syncLoop() {
+        if (!currentRoomCode) return;
+        const room = getRoomData(currentRoomCode);
+        if (!room) return;
+
+        // Aktualizacja widoku lobby
+        renderLobbyPlayers(room.players);
+
+        // Wykrycie startu gry przez gracza
+        if (!isHost && room.status === 'in_game' && document.getElementById('screen-room-lobby').classList.contains('active')) {
+            initGameQuestions(room);
+            goToScreen('screen-arena');
+        }
+
+        // Synchronizacja wyników w trakcie gry
+        if (document.getElementById('screen-arena').classList.contains('active')) {
+            updateLiveLeaderboard(room.players);
+        }
+    }
+
+    function renderLobbyPlayers(players) {
+        const list = document.getElementById('lobby-players-list');
+        list.innerHTML = '';
+
+        players.forEach((p, idx) => {
+            const item = document.createElement('div');
+            item.className = 'player-item';
+            
+            let html = `<span>${p.name} ${p.isHost ? '(Host)' : ''}</span>`;
+            if (isHost && !p.isHost) {
+                html += `<button class="btn btn-red btn-secondary" style="padding: 4px 10px;" onclick="kickPlayer(${idx})">Usuń</button>`;
+            }
+            item.innerHTML = html;
+            list.appendChild(item);
+        });
+
+        document.getElementById('player-count').innerText = players.length;
+    }
+
+    function kickPlayer(index) {
+        const room = getRoomData(currentRoomCode);
+        if (room) {
+            room.players.splice(index, 1);
+            saveRoomData(currentRoomCode, room);
+        }
+    }
+
+    function leaveLobby() {
+        if (syncInterval) clearInterval(syncInterval);
+        goToScreen('screen-home');
+    }
+
+    function initGameQuestions(room) {
+        let diff = 'easy';
+        if (room.classVal >= 4 && room.classVal <= 6) diff = 'medium';
+        if (room.classVal >= 7) diff = 'hard';
+
+        const topicRiddles = data[diff][room.topic].riddles;
+
+        arenaQuestionsList = [];
+        for (let i = 0; i < 25; i++) {
+            arenaQuestionsList.push(topicRiddles[i % topicRiddles.length]);
+        }
+
+        arenaQuestionIndex = 0;
+        showArenaQuestion();
+    }
+
+    function startArenaGame() {
+        if (!isHost) return;
+
+        const room = getRoomData(currentRoomCode);
+        if (!room) return;
+
+        room.status = 'in_game';
+        saveRoomData(currentRoomCode, room);
+
+        initGameQuestions(room);
+        goToScreen('screen-arena');
+    }
+
+    function showArenaQuestion() {
+        if (arenaQuestionIndex >= 25) {
+            finishArena();
+            return;
+        }
+
+        document.getElementById('arena-progress').innerText = `Pytanie ${arenaQuestionIndex + 1} z 25`;
+        const q = arenaQuestionsList[arenaQuestionIndex];
+        document.getElementById('arena-question').innerText = q.q;
+
+        const optionsDiv = document.getElementById('arena-options');
+        optionsDiv.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const div = document.createElement('div');
+            div.className = 'quiz-option';
+            div.innerText = opt;
+            div.onclick = () => submitArenaAnswer(idx, q.correct);
+            optionsDiv.appendChild(div);
+        });
+    }
+
+    function submitArenaAnswer(selected, correct) {
+        if (selected === correct) {
+            const room = getRoomData(currentRoomCode);
+            if (room) {
+                const player = room.players.find(p => p.name === myNickname);
+                if (player) {
+                    player.score += 10;
+                    saveRoomData(currentRoomCode, room);
+                }
+            }
+        }
+
+        arenaQuestionIndex++;
+        showArenaQuestion();
+    }
+
+    function updateLiveLeaderboard(players) {
+        const sorted = [...players].sort((a, b) => b.score - a.score);
+
+        const container = document.getElementById('arena-live-scores');
+        container.innerHTML = '';
+
+        sorted.forEach(p => {
+            const span = document.createElement('span');
+            span.innerHTML = `<strong>${p.name}:</strong> ${p.score} pkt`;
+            container.appendChild(span);
+        });
+    }
+
+    function finishArena() {
+        const room = getRoomData(currentRoomCode);
+        const players = room ? room.players : [];
+        players.sort((a, b) => b.score - a.score);
+
+        const list = document.getElementById('final-leaderboard');
+        list.innerHTML = '';
+
+        players.forEach((p, idx) => {
+            const item = document.createElement('div');
+            item.className = 'player-item';
+            item.innerHTML = `<span><strong>#${idx + 1} ${p.name}</strong></span> <span>${p.score} pkt</span>`;
+            list.appendChild(item);
+        });
+
+        if (syncInterval) clearInterval(syncInterval);
+        goToScreen('screen-arena-results');
+    }
+</script>
+
+</body>
+</html>
