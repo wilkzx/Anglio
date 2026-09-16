@@ -102,7 +102,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
         }
@@ -267,7 +267,7 @@
         <h1>Wybierz Tryb</h1>
         <button class="btn" onclick="startLearning('flashcards')">Słówka (Fiszki)</button>
         <br>
-        <button class="btn" onclick="startLearning('riddles')">Zagadki / Quiz</button>
+        <button class="btn" onclick="startLearning('riddles')">Quiz</button>
         <br><br>
         <button class="btn btn-secondary" onclick="goToScreen('screen-topic')">Cofnij</button>
     </div>
@@ -292,7 +292,7 @@
     <div id="screen-riddles" class="screen">
         <h1>Quiz</h1>
         <p id="riddle-question" style="font-size: 1.2rem; color: #fff; margin: 20px 0;"></p>
-        <div id="riddle-options"></div>
+        <div id="riddle-container"></div>
         <p id="riddle-result" style="font-weight: bold; margin-top: 15px;"></p>
         <br>
         <button class="btn btn-secondary" onclick="goToScreen('screen-mode')">Cofnij</button>
@@ -389,34 +389,57 @@
                     { en: "I am", pl: "Ja jestem" },
                     { en: "You are", pl: "Ty jesteś" },
                     { en: "He is", pl: "On jest" },
-                    { en: "She is", pl: "Ona jest" }
+                    { en: "She is", pl: "Ona jest" },
+                    { en: "It is", pl: "To jest" },
+                    { en: "We are", pl: "My jesteśmy" },
+                    { en: "They are", pl: "Oni są" }
                 ],
                 riddles: [
                     { q: "I ___ a student.", options: ["am", "is", "are"], correct: 0 },
-                    { q: "She ___ happy.", options: ["is", "am", "are"], correct: 0 },
-                    { q: "They ___ my friends.", options: ["are", "is", "am"], correct: 0 }
+                    { q: "She ___ happy today.", options: ["is", "am", "are"], correct: 0 },
+                    { q: "They ___ my best friends.", options: ["are", "is", "am"], correct: 0 },
+                    { type: "text", q: "Przetłumacz na angielski: 'On jest'", answer: ["he is"] },
+                    { q: "We ___ at school.", options: ["are", "am", "is"], correct: 0 },
+                    { type: "text", q: "Przetłumacz na polski: 'I am'", answer: ["ja jestem", "jestem"] },
+                    { q: "It ___ a fast car.", options: ["is", "are", "am"], correct: 0 },
+                    { type: "text", q: "Uzupełnij zdanie: 'You ___ smart.'", answer: ["are"] }
                 ]
             },
             "Zwierzęta": {
                 words: [
                     { en: "Dog", pl: "Pies" },
                     { en: "Cat", pl: "Kot" },
-                    { en: "Bird", pl: "Ptak" }
+                    { en: "Bird", pl: "Ptak" },
+                    { en: "Rabbit", pl: "Królik" },
+                    { en: "Fish", pl: "Ryba" },
+                    { en: "Horse", pl: "Koń" }
                 ],
                 riddles: [
                     { q: "It barks and wags its tail.", options: ["Dog", "Cat", "Cow"], correct: 0 },
-                    { q: "It says 'meow'.", options: ["Dog", "Cat", "Bird"], correct: 1 }
+                    { q: "It says 'meow'.", options: ["Dog", "Cat", "Bird"], correct: 1 },
+                    { type: "text", q: "Jak jest po angielsku 'Królik'?", answer: ["rabbit"] },
+                    { q: "Which animal swims in water?", options: ["Fish", "Cat", "Bird"], correct: 0 },
+                    { type: "text", q: "Przetłumacz na polski: 'Horse'", answer: ["koń", "kon"] },
+                    { q: "It can fly in the sky.", options: ["Bird", "Dog", "Fish"], correct: 0 }
                 ]
             },
             "Kolory i Liczby": {
                 words: [
                     { en: "Red", pl: "Czerwony" },
                     { en: "Blue", pl: "Niebieski" },
-                    { en: "One", pl: "Jeden" }
+                    { en: "Green", pl: "Zielony" },
+                    { en: "Yellow", pl: "Żółty" },
+                    { en: "One", pl: "Jeden" },
+                    { en: "Five", pl: "Pięć" },
+                    { en: "Ten", pl: "Dziesięć" }
                 ],
                 riddles: [
                     { q: "What color is a strawberry?", options: ["Red", "Green", "Blue"], correct: 0 },
-                    { q: "What color is the sky on a sunny day?", options: ["Red", "Blue", "Black"], correct: 1 }
+                    { q: "What color is the sky on a sunny day?", options: ["Red", "Blue", "Black"], correct: 1 },
+                    { type: "text", q: "Jak po angielsku napisać liczbę '10'?", answer: ["ten"] },
+                    { type: "text", q: "Przetłumacz na polski słowo 'Yellow'", answer: ["żółty", "zolty"] },
+                    { q: "Grass is normally...", options: ["Green", "Yellow", "Red"], correct: 0 },
+                    { type: "text", q: "Uzupełnij po angielsku: 'One, two, ...'", answer: ["three"] }
                 ]
             }
         },
@@ -424,22 +447,32 @@
             "To Be (Was/Were)": {
                 words: [
                     { en: "I was", pl: "Byłem/Byłam" },
+                    { en: "You were", pl: "Byłeś/Byłaś" },
+                    { en: "He was", pl: "On był" },
                     { en: "They were", pl: "Byli/Były" }
                 ],
                 riddles: [
                     { q: "Yesterday I ___ at school.", options: ["was", "were", "am"], correct: 0 },
-                    { q: "We ___ at home last night.", options: ["were", "was", "are"], correct: 0 }
+                    { q: "We ___ at home last night.", options: ["were", "was", "are"], correct: 0 },
+                    { type: "text", q: "Napisz po angielsku przeszłą formę 'They (być)'", answer: ["they were"] },
+                    { q: "She ___ late for class yesterday.", options: ["was", "were", "is"], correct: 0 },
+                    { type: "text", q: "Przetłumacz na angielski: 'Ja byłem'", answer: ["i was"] }
                 ]
             },
             "Szkoła i Przybory": {
                 words: [
                     { en: "Pencil", pl: "Ołówek" },
                     { en: "Desk", pl: "Biurko" },
-                    { en: "Ruler", pl: "Linijka" }
+                    { en: "Ruler", pl: "Linijka" },
+                    { en: "Backpack", pl: "Plecak" },
+                    { en: "Notebook", pl: "Zeszyt" }
                 ],
                 riddles: [
                     { q: "You write with this in your notebook.", options: ["Pen", "Ruler", "Eraser"], correct: 0 },
-                    { q: "You use it to measure lines.", options: ["Ruler", "Pencil", "Book"], correct: 0 }
+                    { q: "You use it to measure straight lines.", options: ["Ruler", "Pencil", "Book"], correct: 0 },
+                    { type: "text", q: "Jak jest po angielsku 'Plecak'?", answer: ["backpack"] },
+                    { type: "text", q: "Przetłumacz na polski: 'Notebook'", answer: ["zeszyt"] },
+                    { q: "You sit at your ___ during lessons.", options: ["desk", "ruler", "pencil"], correct: 0 }
                 ]
             }
         },
@@ -447,21 +480,30 @@
             "Past Tenses & Perfect": {
                 words: [
                     { en: "Been", pl: "Był (Present Perfect)" },
-                    { en: "Gone", pl: "Poszedł" }
+                    { en: "Gone", pl: "Poszedł" },
+                    { en: "Eaten", pl: "Zjedzony" },
+                    { en: "Written", pl: "Napisany" }
                 ],
                 riddles: [
                     { q: "She has ___ to Paris twice.", options: ["been", "was", "were"], correct: 0 },
-                    { q: "They have already ___ their homework.", options: ["done", "did", "do"], correct: 0 }
+                    { q: "They have already ___ their homework.", options: ["done", "did", "do"], correct: 0 },
+                    { type: "text", q: "Napisz III formę czasownika 'write' (pisać):", answer: ["written"] },
+                    { q: "I haven't ___ lunch yet.", options: ["eaten", "ate", "eat"], correct: 0 },
+                    { type: "text", q: "Napisz III formę czasownika 'go' (iść):", answer: ["gone"] }
                 ]
             },
             "Środowisko i Ekologia": {
                 words: [
                     { en: "Environment", pl: "Środowisko" },
-                    { en: "Pollution", pl: "Zanieczyszczenie" }
+                    { en: "Pollution", pl: "Zanieczyszczenie" },
+                    { en: "Recycling", pl: "Recykling" },
+                    { en: "Protection", pl: "Ochrona" }
                 ],
                 riddles: [
                     { q: "Making nature dirty is called...", options: ["Pollution", "Recycling", "Protection"], correct: 0 },
-                    { q: "Reusing materials is known as...", options: ["Recycling", "Pollution", "Wasting"], correct: 0 }
+                    { q: "Reusing plastic bottles is known as...", options: ["Recycling", "Pollution", "Wasting"], correct: 0 },
+                    { type: "text", q: "Przetłumacz na angielski słowo 'Środowisko'", answer: ["environment"] },
+                    { type: "text", q: "Przetłumacz na polski słowo 'Pollution'", answer: ["zanieczyszczenie", "zanieczyszczenia"] }
                 ]
             }
         }
@@ -556,16 +598,33 @@
         document.getElementById('riddle-question').innerText = currentRiddle.q;
         document.getElementById('riddle-result').innerText = '';
 
-        const optionsContainer = document.getElementById('riddle-options');
-        optionsContainer.innerHTML = '';
+        const container = document.getElementById('riddle-container');
+        container.innerHTML = '';
 
-        currentRiddle.options.forEach((opt, idx) => {
-            const div = document.createElement('div');
-            div.className = 'quiz-option';
-            div.innerText = opt;
-            div.onclick = () => checkAnswer(idx, currentRiddle.correct);
-            optionsContainer.appendChild(div);
-        });
+        if (currentRiddle.type === 'text') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'riddle-text-input';
+            input.placeholder = 'Wpisz odpowiedź...';
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-green';
+            btn.style.marginTop = '10px';
+            btn.innerText = 'Sprawdź';
+            btn.onclick = () => checkTextAnswer(input.value, currentRiddle.answer);
+
+            container.appendChild(input);
+            container.appendChild(document.createElement('br'));
+            container.appendChild(btn);
+        } else {
+            currentRiddle.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                div.innerText = opt;
+                div.onclick = () => checkAnswer(idx, currentRiddle.correct);
+                container.appendChild(div);
+            });
+        }
     }
 
     function checkAnswer(selected, correct) {
@@ -580,6 +639,25 @@
             }, 1000);
         } else {
             result.innerText = "Spróbuj ponownie!";
+            result.style.color = "#f87171";
+        }
+    }
+
+    function checkTextAnswer(userVal, correctAnswers) {
+        const result = document.getElementById('riddle-result');
+        const formattedUserVal = userVal.trim().toLowerCase();
+        const isCorrect = correctAnswers.some(ans => ans.toLowerCase() === formattedUserVal);
+
+        if (isCorrect) {
+            result.innerText = "Świetnie! Poprawnie!";
+            result.style.color = "#4ade80";
+            setTimeout(() => {
+                const riddles = data[currentDifficulty][currentTopic].riddles;
+                currentRiddleIndex = (currentRiddleIndex + 1) % riddles.length;
+                showRiddle();
+            }, 1000);
+        } else {
+            result.innerText = "Niestety nie, spróbuj jeszcze raz!";
             result.style.color = "#f87171";
         }
     }
@@ -790,29 +868,60 @@
         const optionsDiv = document.getElementById('arena-options');
         optionsDiv.innerHTML = '';
 
-        q.options.forEach((opt, idx) => {
-            const div = document.createElement('div');
-            div.className = 'quiz-option';
-            div.innerText = opt;
-            div.onclick = () => submitArenaAnswer(idx, q.correct);
-            optionsDiv.appendChild(div);
-        });
+        if (q.type === 'text') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'arena-text-input';
+            input.placeholder = 'Wpisz odpowiedź...';
+
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-green';
+            btn.style.marginTop = '10px';
+            btn.innerText = 'Zatwierdź';
+            btn.onclick = () => submitArenaTextAnswer(input.value, q.answer);
+
+            optionsDiv.appendChild(input);
+            optionsDiv.appendChild(document.createElement('br'));
+            optionsDiv.appendChild(btn);
+        } else {
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                div.innerText = opt;
+                div.onclick = () => submitArenaAnswer(idx, q.correct);
+                optionsDiv.appendChild(div);
+            });
+        }
     }
 
     function submitArenaAnswer(selected, correct) {
         if (selected === correct) {
-            const room = getRoomData(currentRoomCode);
-            if (room) {
-                const player = room.players.find(p => p.name === myNickname);
-                if (player) {
-                    player.score += 10;
-                    saveRoomData(currentRoomCode, room);
-                }
-            }
+            addScore(10);
         }
-
         arenaQuestionIndex++;
         showArenaQuestion();
+    }
+
+    function submitArenaTextAnswer(userVal, correctAnswers) {
+        const formatted = userVal.trim().toLowerCase();
+        const isCorrect = correctAnswers.some(ans => ans.toLowerCase() === formatted);
+        
+        if (isCorrect) {
+            addScore(10);
+        }
+        arenaQuestionIndex++;
+        showArenaQuestion();
+    }
+
+    function addScore(pts) {
+        const room = getRoomData(currentRoomCode);
+        if (room) {
+            const player = room.players.find(p => p.name === myNickname);
+            if (player) {
+                player.score += pts;
+                saveRoomData(currentRoomCode, room);
+            }
+        }
     }
 
     function updateLiveLeaderboard(players) {
